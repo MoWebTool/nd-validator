@@ -1,0 +1,38 @@
+{
+  "name": "nd-validator",
+  "version": "0.0.0",
+  "description": "表单校验组件。",
+  "keywords": [],
+  "homepage": "https://github.com/ndfront/nd-validator",
+  "author": {
+    "name": "crossjs",
+    "email": "liwenfu@crossjs.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ndfront/nd-validator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ndfront/nd-validator/issues"
+  },
+  "licenses": "MIT",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-exec": "^0.4.6",
+    "grunt-jsdoc": "^0.5.7",
+    "grunt-spm-server": "^0.1.0",
+    "load-grunt-tasks": "^0.6.0"
+  },
+  "spm": {
+    "main": "index.js",
+    "dependencies": {
+      "jquery": "1.11.1",
+      "nd-widget": "0.0.1"
+    },
+    "devDependencies": {
+      "expect.js": "0.3.1"
+    }
+  }
+}
