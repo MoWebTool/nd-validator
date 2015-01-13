@@ -36,6 +36,41 @@ function findItemBySelector(target, array) {
   return ret;
 }
 
+function addItemFromHTML(validator) {
+  $('input, textarea, select', validator.element).each(function(i, input) {
+
+    input = $(input);
+    var type = input.attr('type');
+
+    if (type === 'button' || type === 'submit' || type === 'reset') {
+      return true;
+    }
+
+    var options = {};
+
+    if (type === 'radio' || type === 'checkbox') {
+      options.element = $('[type=' + type + '][name=' + input.attr('name') + ']', validator.element);
+    } else {
+      options.element = input;
+    }
+
+
+    if (!validator.query(options.element)) {
+
+      var obj = utils.parseDom(input);
+
+      if (!obj.rule) {
+        return true;
+      }
+
+      $.extend(options, obj);
+
+      validator.addItem(options);
+    }
+  });
+
+}
+
 var Core = Widget.extend({
   attrs: {
     triggerType: 'blur',
@@ -102,45 +137,14 @@ var Core = Widget.extend({
       this.query(element).get(err ? 'showMessage' : 'hideMessage').call(this, message, element, event);
     });
 
+    addItemFromHTML(self);
+
     validators.push(self);
   },
 
   Statics: $.extend({helper: utils.helper}, require('./rule'), {
     autoRender: function(cfg) {
-
-      var validator = new this(cfg);
-
-      $('input, textarea, select', validator.element).each(function(i, input) {
-
-        input = $(input);
-        var type = input.attr('type');
-
-        if (type === 'button' || type === 'submit' || type === 'reset') {
-          return true;
-        }
-
-        var options = {};
-
-        if (type === 'radio' || type === 'checkbox') {
-          options.element = $('[type=' + type + '][name=' + input.attr('name') + ']', validator.element);
-        } else {
-          options.element = input;
-        }
-
-
-        if (!validator.query(options.element)) {
-
-          var obj = utils.parseDom(input);
-
-          if (!obj.rule) {
-            return true;
-          }
-
-          $.extend(options, obj);
-
-          validator.addItem(options);
-        }
-      });
+      addItemFromHTML(new this(cfg));
     },
 
     query: function(selector) {
