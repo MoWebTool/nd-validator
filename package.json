@@ -1,6 +1,6 @@
 {
   "name": "nd-validator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "表单校验组件。",
   "keywords": [],
   "homepage": "https://github.com/ndfront/nd-validator",
@@ -29,7 +29,7 @@
     "main": "index.js",
     "dependencies": {
       "jquery": "1.11.1",
-      "nd-widget": "0.0.1"
+      "nd-widget": "0.1.0"
     },
     "devDependencies": {
       "expect.js": "0.3.1"
