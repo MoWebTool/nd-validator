@@ -128,5 +128,25 @@ var Validator = Core.extend({
   }
 });
 
+Validator.pluginEntry = {
+  name: 'Validator',
+  starter: function() {
+    var plugin = this,
+      host = plugin.host;
+
+    plugin.execute = function() {
+      plugin.exports = new Validator({
+        element: host.element
+      });
+
+      plugin.trigger('export', plugin.exports);
+    };
+
+    host.after('render', plugin.execute);
+
+    // 通知就绪
+    this.ready();
+  }
+};
 
 module.exports = Validator;
