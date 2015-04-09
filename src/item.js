@@ -170,11 +170,12 @@ var Item = Widget.extend({
   // 通过 async.forEachSeries 的第二个参数 Fn(item, cb) 的 cb 参数
   execute: function (callback, context) {
     var self = this,
-      elemDisabled = !!self.element.attr('disabled');
+      elemDisabled = !!self.element.attr('disabled'),
+      elemDataSkip = !!self.element.data('skip');
 
     context = context || {};
     // 如果是设置了不检查不可见元素的话, 直接 callback
-    if (self.get('skipHidden') && utils.isHidden(self.element) || elemDisabled) {
+    if (self.get('skipHidden') && utils.isHidden(self.element) || elemDisabled || elemDataSkip) {
       callback && callback(null, '', self.element);
       return self;
     }
