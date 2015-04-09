@@ -171,7 +171,7 @@ var Item = Widget.extend({
   execute: function (callback, context) {
     var self = this,
       elemDisabled = !!self.element.attr('disabled'),
-      elemDataSkip = !!self.element.data('skip');
+      elemDataSkip = self.element.attr('data-skip') === 'true';
 
     context = context || {};
     // 如果是设置了不检查不可见元素的话, 直接 callback
