@@ -144,6 +144,10 @@ Validator.pluginEntry = {
 
     host.after('render', plugin.execute);
 
+    host.before('destroy', function() {
+      plugin.exports && plugin.exports.destroy();
+    });
+
     // 通知就绪
     this.ready();
   }
