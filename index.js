@@ -16,7 +16,10 @@ var Validator = Core.extend({
     'mouseenter .{{attrs.textareaClass}}': 'mouseenter',
     'mouseleave .{{attrs.textareaClass}}': 'mouseleave',
     'focus .{{attrs.itemClass}} input,textarea,select': 'focus',
-    'blur .{{attrs.itemClass}} input,textarea,select': 'blur'
+    'blur .{{attrs.itemClass}} input,textarea,select': 'blur',
+    'mouseup .{{attrs.explainClass}}': function(e) {
+      this.getItem(e.currentTarget).find('input,textarea,select').focus();
+    }
   },
 
   attrs: {
@@ -141,6 +144,17 @@ Validator.pluginEntry = {
 
       plugin.trigger('export', plugin.exports);
     };
+
+    typeof host.use === 'function' &&
+    plugin.on('export', function(instance) {
+      host.use(function(next) {
+        instance.execute(function(err) {
+          if (!err) {
+            next();
+          }
+        });
+      });
+    });
 
     host.after('render', plugin.execute);
 
