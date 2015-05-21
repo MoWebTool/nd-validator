@@ -110,7 +110,7 @@ var Validator = Core.extend({
       that = this;
 
     if (autoFocusEle && autoFocusEle.has(target)) {
-      $(target).keyup(function() {
+      $(target).on('input',function() {
         that.set('autoFocusEle', null);
         that.focus({target: target});
       });
