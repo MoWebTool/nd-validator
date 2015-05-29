@@ -1,12 +1,14 @@
 /**
- * @module: nd-validator
- * @author: crossjs <liwenfu@crossjs.com> - 2015-01-08 11:57:59
+ * @module Validator
+ * @author crossjs <liwenfu@crossjs.com>
+ * @create 2015-01-08 11:57:59
  */
 
 'use strict';
 
-var $ = require('jquery'),
-  Core = require('./src/core');
+var $ = require('jquery');
+
+var Core = require('./src/core');
 
 var Validator = Core.extend({
 
@@ -110,9 +112,11 @@ var Validator = Core.extend({
       that = this;
 
     if (autoFocusEle && autoFocusEle.has(target)) {
-      $(target).on('input',function() {
+      $(target).on('input', function() {
         that.set('autoFocusEle', null);
-        that.focus({target: target});
+        that.focus({
+          target: target
+        });
       });
 
       return;
@@ -121,7 +125,7 @@ var Validator = Core.extend({
     var item = this.getItem(target);
 
     item.removeClass(this.get('itemErrorClass'))
-        .addClass(this.get('itemFocusClass'));
+      .addClass(this.get('itemFocusClass'));
 
     this.getExplain(target).html($(target).data('explain') || '');
   },
@@ -138,23 +142,23 @@ Validator.pluginEntry = {
       host = plugin.host;
 
     plugin.execute = function() {
-      plugin.exports = new Validator({
+      plugin.exports = new Validator($.extend(true, {
         element: host.element
-      });
+      }, plugin.getOptions('config')));
 
       plugin.trigger('export', plugin.exports);
     };
 
     typeof host.use === 'function' &&
-    plugin.on('export', function(instance) {
-      host.use(function(next) {
-        instance.execute(function(err) {
-          if (!err) {
-            next();
-          }
+      plugin.on('export', function(instance) {
+        host.use(function(next) {
+          instance.execute(function(err) {
+            if (!err) {
+              next();
+            }
+          });
         });
       });
-    });
 
     host.after('render', plugin.execute);
 
