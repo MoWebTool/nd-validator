@@ -1,14 +1,10 @@
 'use strict';
 
-var $ = require('jquery'),
-  Rule = require('./rule');
+var $ = require('jquery');
 
-var counts = 0;
+var Rule = require('./rule');
+
 var helpers = {};
-
-function unique() {
-  return '__anonymous__' + (counts++);
-}
 
 function parseRules(str) {
   if (!str) {
@@ -42,6 +38,12 @@ function parseDom(field) {
     arr.push(type);
   }
 
+  //parse pattern attribute
+  var pattern = field.attr('pattern');
+  if (pattern) {
+    arr.push('pattern{pattern:' + pattern + '}');
+  }
+
   //parse min attribute
   var min = field.attr('min');
   if (min) {
@@ -64,15 +66,6 @@ function parseDom(field) {
   var maxlength = field.attr('maxlength');
   if (maxlength) {
     arr.push('maxlength{max:' + maxlength + '}');
-  }
-
-  //parse pattern attribute
-  var pattern = field.attr('pattern');
-  if (pattern) {
-    var regexp = new RegExp(pattern),
-      name = unique();
-    Rule.addRule(name, regexp);
-    arr.push(name);
   }
 
   //parse data-rule attribute to get custom rules

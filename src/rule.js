@@ -221,6 +221,10 @@ addRule('digits', /^\s*\d+\s*$/, '{{display}}的格式不正确');
 
 addRule('date', /^\d{4}\-[01]?\d\-[0-3]?\d$|^[01]\d\/[0-3]\d\/\d{4}$|^\d{4}年[01]?\d月[0-3]?\d[日号]$/, '{{display}}的格式不正确');
 
+addRule('pattern', function(options) {
+  return new RegExp(options.pattern).test(options.element.val());
+}, '{{display}}不符合规则“{{pattern}}”');
+
 addRule('min', function(options) {
   var element = options.element,
     min = options.min;
