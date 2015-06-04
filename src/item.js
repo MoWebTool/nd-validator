@@ -12,10 +12,13 @@ var utils = require('./utils');
 var async = require('./async');
 var Rule = require('./rule');
 
+// var SKIP_SUBMIT = 1; // see: nd-form
+var SKIP_VALIDATE = 2;
+
 var setterConfig = {
-  value: $.noop,
+  value: function() {},
   setter: function (val) {
-    return $.isFunction(val) ? val : utils.helper(val);
+    return (typeof val === 'function') ? val : utils.helper(val);
   }
 };
 
@@ -177,7 +180,7 @@ var Item = Widget.extend({
   execute: function (callback, context) {
     var self = this,
       elemDisabled = !!self.element.attr('disabled'),
-      elemDataSkip = self.element.attr('data-skip') === 'true';
+      elemDataSkip = +(self.element.attr('data-skip') || '') & SKIP_VALIDATE;
 
     context = context || {};
 
