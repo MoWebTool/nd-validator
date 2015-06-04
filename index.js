@@ -1,7 +1,6 @@
 /**
  * @module Validator
  * @author crossjs <liwenfu@crossjs.com>
- * @create 2015-01-08 11:57:59
  */
 
 'use strict';
@@ -47,11 +46,9 @@ var Validator = Core.extend({
   setup: function() {
     Validator.superclass.setup.call(this);
 
-    var that = this;
-
     this.on('autoFocus', function(ele) {
-      that.set('autoFocusEle', ele);
-    });
+      this.set('autoFocusEle', ele);
+    }.bind(this));
   },
 
   addItem: function(cfg) {
@@ -146,6 +143,18 @@ Validator.pluginEntry = {
         element: host.element
       }, plugin.getOptions('config')));
 
+      // for form
+      typeof host.addField === 'function' &&
+        host.after('addField', function(ret, options) {
+          Validator.addItemFromHTML(plugin.exports, '[name="' + options.name + '"]')
+        });
+
+      // for form
+      typeof host.removeField === 'function' &&
+        host.before('removeField', function(name) {
+          plugin.exports.removeItem(host.$('[name="' + name + '"]'));
+        });
+
       plugin.trigger('export', plugin.exports);
     };
 
@@ -157,7 +166,7 @@ Validator.pluginEntry = {
               next();
             }
           });
-        });
+        }, 'Validator');
       });
 
     host.after('render', plugin.execute);

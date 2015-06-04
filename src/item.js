@@ -1,10 +1,16 @@
+/**
+ * @module Validator
+ * @author crossjs <liwenfu@crossjs.com>
+ */
+
 'use strict';
 
-var $ = require('jquery'),
-  Widget = require('nd-widget'),
-  utils = require('./utils'),
-  async = require('./async'),
-  Rule = require('./rule');
+var $ = require('jquery');
+var Widget = require('nd-widget');
+
+var utils = require('./utils');
+var async = require('./async');
+var Rule = require('./rule');
 
 var setterConfig = {
   value: $.noop,
@@ -174,6 +180,7 @@ var Item = Widget.extend({
       elemDataSkip = self.element.attr('data-skip') === 'true';
 
     context = context || {};
+
     // 如果是设置了不检查不可见元素的话, 直接 callback
     if (self.get('skipHidden') && utils.isHidden(self.element) || elemDisabled || elemDataSkip) {
       callback && callback(null, '', self.element);
@@ -204,7 +211,7 @@ var Item = Widget.extend({
 
     isSuccess = !!isSuccess;
 
-    $.each(rules, function(i, item) {
+    rules.forEach(function(item) {
       var obj = utils.parseRule(item),
         ruleName = obj.name,
         param = obj.param;
@@ -213,6 +220,7 @@ var Item = Widget.extend({
         message = Rule.getMessage($.extend(options || {}, getMsgOptions(param, ruleName, self)), isSuccess);
       }
     });
+
     return message;
   }
 });

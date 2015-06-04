@@ -1,23 +1,29 @@
+/**
+ * @module Validator
+ * @author crossjs <liwenfu@crossjs.com>
+ */
+
 'use strict';
 
-var $ = require('jquery'),
-  Widget = require('nd-widget'),
-  async = require('./async'),
-  utils = require('./utils'),
-  Item = require('./item');
+var $ = require('jquery');
+var Widget = require('nd-widget');
+
+var async = require('./async');
+var utils = require('./utils');
+var Item = require('./item');
 
 var validators = [];
 
 var setterConfig = {
-  value: $.noop,
+  value: function() {},
   setter: function(val) {
-    return $.isFunction(val) ? val : utils.helper(val);
+    return (typeof val === 'function') ? val : utils.helper(val);
   }
 };
 
 // 从数组中删除对应元素
 function erase(target, array) {
-  for(var i=0; i<array.length; i++) {
+  for (var i = 0; i < array.length; i++) {
     if (target === array[i]) {
       array.splice(i, 1);
       return array;
@@ -27,57 +33,58 @@ function erase(target, array) {
 
 function findItemBySelector(target, array) {
   var ret;
-  $.each(array, function(i, item) {
+
+  array.some(function(item) {
     if (target.get(0) === item.element.get(0)) {
       ret = item;
-      return false;
+      return true;
     }
   });
+
   return ret;
 }
 
-function addItemFromHTML(validator) {
-  $('input, textarea, select', validator.element).each(function(i, input) {
+function addItemFromHTML(validator, selector) {
+  $(selector || 'input, textarea, select', validator.element)
+    .each(function(i, input) {
+      input = $(input);
 
-    input = $(input);
-    var type = input.attr('type');
+      var type = input.attr('type');
 
-    if (type === 'button' || type === 'submit' || type === 'reset') {
-      return true;
-    }
-
-    var options = {};
-
-    if (type === 'radio' || type === 'checkbox') {
-      options.element = $('[type=' + type + '][name=' + input.attr('name') + ']', validator.element);
-    } else {
-      options.element = input;
-    }
-
-
-    if (!validator.query(options.element)) {
-
-      var obj = utils.parseDom(input);
-
-      if (!obj.rule) {
+      if (type === 'button' || type === 'submit' || type === 'reset') {
         return true;
       }
 
-      $.extend(options, obj);
+      var options = {};
 
-      validator.addItem(options);
-    }
-  });
+      if (type === 'radio' || type === 'checkbox') {
+        options.element = $('[type=' + type + '][name=' + input.attr('name') + ']', validator.element);
+      } else {
+        options.element = input;
+      }
+
+      if (!validator.query(options.element)) {
+        var obj = utils.parseDom(input);
+
+        if (!obj.rule) {
+          return true;
+        }
+
+        $.extend(options, obj);
+
+        validator.addItem(options);
+      }
+    });
 
 }
 
 var Core = Widget.extend({
   attrs: {
     triggerType: 'blur',
-    checkOnSubmit: true,    // 是否在表单提交前进行校验，默认进行校验。
-    stopOnError: false,     // 校验整个表单时，遇到错误时是否停止校验其他表单项。
-    autoSubmit: true,       // When all validation passed, submit the form automatically.
-    checkNull: true,        // 除提交前的校验外，input的值为空时是否校验。
+    checkOnSubmit: true, // 是否在表单提交前进行校验，默认进行校验。
+    stopOnError: false, // 校验整个表单时，遇到错误时是否停止校验其他表单项。
+    autoSubmit: true, // When all validation passed, submit the form automatically.
+    checkNull: true, // 除提交前的校验外，input的值为空时是否校验。
     onItemValidate: setterConfig,
     onItemValidated: setterConfig,
     onFormValidate: setterConfig,
@@ -97,9 +104,9 @@ var Core = Widget.extend({
     },
     showMessage: setterConfig, // specify how to display error messages
     hideMessage: setterConfig, // specify how to hide error messages
-    autoFocus: true,           // Automatically focus at the first element failed validation if true.
-    failSilently: false,       // If set to true and the given element passed to addItem does not exist, just ignore.
-    skipHidden: false          // 如果 DOM 隐藏是否进行校验
+    autoFocus: true, // Automatically focus at the first element failed validation if true.
+    failSilently: false, // If set to true and the given element passed to addItem does not exist, just ignore.
+    skipHidden: false // 如果 DOM 隐藏是否进行校验
   },
 
   setup: function() {
@@ -142,7 +149,9 @@ var Core = Widget.extend({
     validators.push(self);
   },
 
-  Statics: $.extend({helper: utils.helper}, require('./rule'), {
+  Statics: $.extend({
+    helper: utils.helper
+  }, require('./rule'), {
     autoRender: function(cfg) {
       addItemFromHTML(new this(cfg));
     },
@@ -161,16 +170,19 @@ var Core = Widget.extend({
       validator.addItem(options);
       validator.query(element).execute();
       validator.destroy();
-    }
-  }),
+    },
 
+    addItemFromHTML: addItemFromHTML
+  }),
 
   addItem: function(cfg) {
     var self = this;
-    if ($.isArray(cfg)) {
-      $.each(cfg, function(i, v) {
+
+    if (Array.isArray(cfg)) {
+      cfg.forEach(function(v) {
         self.addItem(v);
       });
+
       return this;
     }
 
@@ -197,9 +209,11 @@ var Core = Widget.extend({
         throw new Error('element does not exist');
       }
     }
+
     var item = new Item(cfg);
 
     self.items.push(item);
+
     // 关联 item 到当前 validator 对象
     item._validator = self;
 
@@ -207,7 +221,10 @@ var Core = Widget.extend({
       if (!this.get('checkNull') && !this.element.val()) {
         return;
       }
-      this.execute(null, {event: e});
+
+      this.execute(null, {
+        event: e
+      });
     });
 
     item.on('all', function() {
@@ -237,12 +254,13 @@ var Core = Widget.extend({
       firstElem = null;
 
     // 在表单校验前, 隐藏所有校验项的错误提示
-    $.each(self.items, function(i, item) {
+    self.items.forEach(function(item) {
       item.get('hideMessage').call(self, null, item.element);
     });
+
     self.trigger('formValidate', self.element);
 
-    async[self.get('stopOnError') ? 'forEachSeries' : 'forEach' ](self.items, function(item, cb) {  // iterator
+    async[self.get('stopOnError') ? 'forEachSeries' : 'forEach'](self.items, function(item, cb) { // iterator
       item.execute(function(err, message, ele) {
         // 第一个校验错误的元素
         if (err && !hasError) {
@@ -256,7 +274,7 @@ var Core = Widget.extend({
         cb(self.get('stopOnError') ? err : null);
 
       });
-    }, function() {  // complete callback
+    }, function() { // complete callback
       if (self.get('autoFocus') && hasError) {
         self.trigger('autoFocus', firstElem);
         firstElem.focus();
@@ -280,8 +298,7 @@ var Core = Widget.extend({
         } else {
           self.element.attr('novalidate', self.__novalidate);
         }
-      } catch (e) {
-      }
+      } catch (e) {}
 
       self.element.off('submit.validator');
     }
@@ -296,18 +313,6 @@ var Core = Widget.extend({
 
   query: function(selector) {
     return findItemBySelector(this.$(selector), this.items);
-
-    // 不使用 Widget.query 是因为, selector 有可能是重复, 选择第一个有可能不是属于
-    // 该组件的. 即使 再次使用 this.items 匹配, 也没法找到
-    /*var target = Widget.query(selector),
-      result = null;
-    $.each(this.items, function(i, item) {
-      if (item === target) {
-        result = target;
-        return false;
-      }
-    });
-    return result;*/
   }
 
 });
