@@ -4,7 +4,14 @@ var $ = require('jquery');
 
 var Rule = require('./rule');
 
+var counts = 0;
+var patterns = [];
 var helpers = {};
+
+function unique(pattern) {
+  patterns.push(pattern);
+  return counts++;
+}
 
 function parseRules(str) {
   if (!str) {
@@ -41,7 +48,8 @@ function parseDom(field) {
   //parse pattern attribute
   var pattern = field.attr('pattern');
   if (pattern) {
-    arr.push('pattern{pattern:' + pattern + '}');
+    var index = unique(pattern);
+    arr.push('pattern{pattern:' + index + '}');
   }
 
   //parse min attribute
@@ -67,6 +75,15 @@ function parseDom(field) {
   if (maxlength) {
     arr.push('maxlength{max:' + maxlength + '}');
   }
+
+  //parse pattern attribute
+  // var pattern = field.attr('pattern');
+  // if (pattern) {
+  //   var regexp = new RegExp(pattern),
+  //     name = unique();
+  //   Rule.addRule(name, regexp);
+  //   arr.push(name);
+  // }
 
   //parse data-rule attribute to get custom rules
   var rules = field.attr('data-rule');
@@ -94,22 +111,26 @@ function parseJSON(str) {
   var result = {};
 
   var arr = str.split(',');
-  $.each(arr, function (i, v) {
-    arr[i] = $.trim(v);
+
+  arr.forEach(function(v, i) {
+    arr[i] = v.trim();
+
     if (!arr[i]) {
       throw new Error(NOTICE);
     }
 
     var arr2 = arr[i].split(':');
 
-    var key = $.trim(arr2[0]),
-      value = $.trim(arr2[1]);
+    var key = arr2[0].trim();
+    var value = arr2[1].trim();
 
     if (!key || !value) {
       throw new Error(NOTICE);
     }
 
-    result[getValue(key)] = $.trim(getValue(value));
+    // 正则，特殊处理
+    result[getValue(key)] = (key === 'pattern') ?
+        patterns[value] : getValue(value).trim();
   });
 
   // 'abc' -> 'abc'  '"abc"' -> 'abc'
