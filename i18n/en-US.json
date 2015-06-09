@@ -7,5 +7,5 @@
   "{{display}}的长度必须大于或等于{{min}}": "The length of {{display}} should be no smaller than {{min}}",
   "{{display}}的长度必须小于或等于{{max}}": "The length of {{display}} should be no bigger than {{max}}",
   "请输入正确的{{display}}": "Please input the correct {{display}}.",
-  "两次输入的{{display}}不一致，请重新输入": "Two {{display}} don't match. Please input again"
+  "两次输入的{{display}}不一致，请重新输入": "Two {{display}} do not match. Please input again"
 }
