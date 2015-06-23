@@ -12,10 +12,10 @@ var Core = require('./src/core');
 var Validator = Core.extend({
 
   events: {
-    'mouseenter .{{attrs.inputClass}}': 'mouseenter',
-    'mouseleave .{{attrs.inputClass}}': 'mouseleave',
-    'mouseenter .{{attrs.textareaClass}}': 'mouseenter',
-    'mouseleave .{{attrs.textareaClass}}': 'mouseleave',
+    // 'mouseenter .{{attrs.inputClass}}': 'mouseenter',
+    // 'mouseleave .{{attrs.inputClass}}': 'mouseleave',
+    // 'mouseenter .{{attrs.textareaClass}}': 'mouseenter',
+    // 'mouseleave .{{attrs.textareaClass}}': 'mouseleave',
     'focus .{{attrs.itemClass}} input,textarea,select': 'focus',
     'blur .{{attrs.itemClass}} input,textarea,select': 'blur',
     'mouseup .{{attrs.explainClass}}': function(e) {
@@ -26,11 +26,11 @@ var Validator = Core.extend({
   attrs: {
     explainClass: 'ui-form-explain',
     itemClass: 'ui-form-item',
-    itemHoverClass: 'ui-form-item-hover',
+    // itemHoverClass: 'ui-form-item-hover',
     itemFocusClass: 'ui-form-item-focus',
     itemErrorClass: 'ui-form-item-error',
-    inputClass: 'ui-input',
-    textareaClass: 'ui-textarea',
+    inputClass: 'ui-form-input',
+    textareaClass: 'ui-form-textarea',
 
     showMessage: function(message, element) {
       this.getExplain(element).html(message);
@@ -95,13 +95,13 @@ var Validator = Core.extend({
     return $(ele).parents('.' + this.get('itemClass'));
   },
 
-  mouseenter: function(e) {
-    this.getItem(e.target).addClass(this.get('itemHoverClass'));
-  },
+  // mouseenter: function(e) {
+  //   this.getItem(e.target).addClass(this.get('itemHoverClass'));
+  // },
 
-  mouseleave: function(e) {
-    this.getItem(e.target).removeClass(this.get('itemHoverClass'));
-  },
+  // mouseleave: function(e) {
+  //   this.getItem(e.target).removeClass(this.get('itemHoverClass'));
+  // },
 
   focus: function(e) {
     var target = e.target,
@@ -146,7 +146,7 @@ Validator.pluginEntry = {
       // for form
       typeof host.addField === 'function' &&
         host.after('addField', function(ret, options) {
-          Validator.addItemFromHTML(plugin.exports, '[name="' + options.name + '"]')
+          Validator.addItemFromHTML(plugin.exports, '[name="' + options.name + '"]');
         });
 
       // for form
