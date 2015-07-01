@@ -76,6 +76,18 @@ function parseDom(field) {
     arr.push('maxlength{max:' + maxlength + '}');
   }
 
+  //parse minbytes attribute
+  var minbytes = field.attr('minbytes');
+  if (minbytes) {
+    arr.push('minbytes{min:' + minbytes + '}');
+  }
+
+  //parse maxbytes attribute
+  var maxbytes = field.attr('maxbytes');
+  if (maxbytes) {
+    arr.push('maxbytes{max:' + maxbytes + '}');
+  }
+
   //parse pattern attribute
   // var pattern = field.attr('pattern');
   // if (pattern) {
