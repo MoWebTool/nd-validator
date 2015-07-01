@@ -105,18 +105,10 @@ var Validator = Core.extend({
 
   focus: function(e) {
     var target = e.target,
-      autoFocusEle = this.get('autoFocusEle'),
-      that = this;
+      autoFocusEle = this.get('autoFocusEle');
 
     if (autoFocusEle && autoFocusEle.has(target)) {
-      $(target).on('input', function() {
-        that.set('autoFocusEle', null);
-        that.focus({
-          target: target
-        });
-      });
-
-      return;
+      return this.set('autoFocusEle', null);
     }
 
     var item = this.getItem(target);
@@ -124,7 +116,7 @@ var Validator = Core.extend({
     item.removeClass(this.get('itemErrorClass'))
       .addClass(this.get('itemFocusClass'));
 
-    this.getExplain(target).html($(target).data('explain') || '');
+    this.getExplain(target).html(target.getAttribute('data-explain') || '');
   },
 
   blur: function(e) {
