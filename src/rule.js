@@ -255,7 +255,7 @@ addRule('minbytes', function(options) {
   var b = v.match(/[^\x00-\xff]/g);
   var l = v.length + (b && b.length);
   return l >= Number(options.min);
-}, '{{display}}的长度必须大于或等于{{min}}字节');
+}, '{{display}}的字节长度必须大于或等于{{min}}');
 
 addRule('maxbytes', function(options) {
   var element = options.element;
@@ -263,7 +263,7 @@ addRule('maxbytes', function(options) {
   var b = v.match(/[^\x00-\xff]/g);
   var l = v.length + (b && b.length);
   return l <= Number(options.max);
-}, '{{display}}的长度必须小于或等于{{max}}字节');
+}, '{{display}}的字节长度必须小于或等于{{max}}');
 
 addRule('mobile', /^1\d{10}$/, '请输入正确的{{display}}');
 
