@@ -8,6 +8,6 @@
   "{{display}}的长度必须大于或等于{{min}}": "Panjang dari {{display}} Tidak boleh lebih kecil dari {{min}}",
   "{{display}}的长度必须小于或等于{{max}}": "Panjang dari {{display}} Tidak boleh lebih besar dari {{max}}",
   "两次输入的{{display}}不一致，请重新输入": "Dua {{display}} Tidak cocok. Harap masukan lagi",
-  "请输入{{display}}": "Masukan Input {{display}}",
-  "请输入正确的{{display}}": "Masukan input yang benar  {{display}}."
+  "请输入{{display}}": "Masukan {{display}}",
+  "请输入正确的{{display}}": "Masukan yang benar  {{display}}."
 }
