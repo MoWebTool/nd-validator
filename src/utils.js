@@ -1,13 +1,16 @@
 'use strict';
 
-var $ = require('jquery'),
-  Rule = require('./rule');
+var $ = require('jquery');
+
+var Rule = require('./rule');
 
 var counts = 0;
+var patterns = [];
 var helpers = {};
 
-function unique() {
-  return '__anonymous__' + (counts++);
+function unique(pattern) {
+  patterns.push(pattern);
+  return counts++;
 }
 
 function parseRules(str) {
@@ -35,11 +38,20 @@ function parseDom(field) {
   var type = field.attr('type');
   if (type && type !== 'submit' && type !== 'cancel' && type !== 'checkbox' && type !== 'radio' && type !== 'select' && type !== 'select-one' && type !== 'file' && type !== 'hidden' && type !== 'textarea') {
 
+    Rule.init();
+
     if (!Rule.getRule(type)) {
       throw new Error('Form field with type "' + type + '" not supported!');
     }
 
     arr.push(type);
+  }
+
+  //parse pattern attribute
+  var pattern = field.attr('pattern');
+  if (pattern) {
+    var index = unique(pattern);
+    arr.push('pattern{pattern:' + index + '}');
   }
 
   //parse min attribute
@@ -66,14 +78,26 @@ function parseDom(field) {
     arr.push('maxlength{max:' + maxlength + '}');
   }
 
-  //parse pattern attribute
-  var pattern = field.attr('pattern');
-  if (pattern) {
-    var regexp = new RegExp(pattern),
-      name = unique();
-    Rule.addRule(name, regexp);
-    arr.push(name);
+  //parse minbytes attribute
+  var minbytes = field.attr('minbytes');
+  if (minbytes) {
+    arr.push('minbytes{min:' + minbytes + '}');
   }
+
+  //parse maxbytes attribute
+  var maxbytes = field.attr('maxbytes');
+  if (maxbytes) {
+    arr.push('maxbytes{max:' + maxbytes + '}');
+  }
+
+  //parse pattern attribute
+  // var pattern = field.attr('pattern');
+  // if (pattern) {
+  //   var regexp = new RegExp(pattern),
+  //     name = unique();
+  //   Rule.addRule(name, regexp);
+  //   arr.push(name);
+  // }
 
   //parse data-rule attribute to get custom rules
   var rules = field.attr('data-rule');
@@ -93,32 +117,6 @@ function parseJSON(str) {
     return null;
   }
 
-  var NOTICE = 'Invalid option object "' + str + '".';
-
-  // remove braces
-  str = str.slice(1, -1);
-
-  var result = {};
-
-  var arr = str.split(',');
-  $.each(arr, function (i, v) {
-    arr[i] = $.trim(v);
-    if (!arr[i]) {
-      throw new Error(NOTICE);
-    }
-
-    var arr2 = arr[i].split(':');
-
-    var key = $.trim(arr2[0]),
-      value = $.trim(arr2[1]);
-
-    if (!key || !value) {
-      throw new Error(NOTICE);
-    }
-
-    result[getValue(key)] = $.trim(getValue(value));
-  });
-
   // 'abc' -> 'abc'  '"abc"' -> 'abc'
   function getValue(str) {
     if (str.charAt(0) === '"' && str.slice(- 1) === '"' || str.charAt(0) === '\'' && str.slice(-1) === '\'') {
@@ -128,6 +126,36 @@ function parseJSON(str) {
 
     return str;
   }
+
+  var NOTICE = 'Invalid option object "' + str + '".';
+
+  // remove braces
+  str = str.slice(1, -1);
+
+  var result = {};
+
+  var arr = str.split(',');
+
+  arr.forEach(function(v, i) {
+    arr[i] = v.trim();
+
+    if (!arr[i]) {
+      throw new Error(NOTICE);
+    }
+
+    var arr2 = arr[i].split(':');
+
+    var key = arr2[0].trim();
+    var value = arr2[1].trim();
+
+    if (!key || !value) {
+      throw new Error(NOTICE);
+    }
+
+    // 正则，特殊处理
+    result[getValue(key)] = (key === 'pattern') ?
+        patterns[value] : getValue(value).trim();
+  });
 
   return result;
 }

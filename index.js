@@ -1,32 +1,32 @@
 /**
- * @module: nd-validator
- * @author: crossjs <liwenfu@crossjs.com> - 2015-01-08 11:57:59
+ * @module Validator
+ * @author crossjs <liwenfu@crossjs.com>
  */
 
 'use strict';
 
-var $ = require('jquery'),
-  Core = require('./src/core');
+var $ = require('jquery');
+
+var Core = require('./src/core');
+var Rule = require('./src/rule');
 
 var Validator = Core.extend({
 
   events: {
-    'mouseenter .{{attrs.inputClass}}': 'mouseenter',
-    'mouseleave .{{attrs.inputClass}}': 'mouseleave',
-    'mouseenter .{{attrs.textareaClass}}': 'mouseenter',
-    'mouseleave .{{attrs.textareaClass}}': 'mouseleave',
     'focus .{{attrs.itemClass}} input,textarea,select': 'focus',
-    'blur .{{attrs.itemClass}} input,textarea,select': 'blur'
+    'blur .{{attrs.itemClass}} input,textarea,select': 'blur',
+    'mouseup .{{attrs.explainClass}}': function(e) {
+      this.getItem(e.currentTarget).find('input,textarea,select').focus();
+    }
   },
 
   attrs: {
     explainClass: 'ui-form-explain',
     itemClass: 'ui-form-item',
-    itemHoverClass: 'ui-form-item-hover',
     itemFocusClass: 'ui-form-item-focus',
     itemErrorClass: 'ui-form-item-error',
-    inputClass: 'ui-input',
-    textareaClass: 'ui-textarea',
+    inputClass: 'ui-form-input',
+    textareaClass: 'ui-form-textarea',
 
     showMessage: function(message, element) {
       this.getExplain(element).html(message);
@@ -42,11 +42,11 @@ var Validator = Core.extend({
   setup: function() {
     Validator.superclass.setup.call(this);
 
-    var that = this;
+    Rule.init();
 
     this.on('autoFocus', function(ele) {
-      that.set('autoFocusEle', ele);
-    });
+      this.set('autoFocusEle', ele);
+    }.bind(this));
   },
 
   addItem: function(cfg) {
@@ -93,34 +93,37 @@ var Validator = Core.extend({
     return $(ele).parents('.' + this.get('itemClass'));
   },
 
-  mouseenter: function(e) {
-    this.getItem(e.target).addClass(this.get('itemHoverClass'));
-  },
+  // mouseenter: function(e) {
+  //   this.getItem(e.target).addClass(this.get('itemHoverClass'));
+  // },
 
-  mouseleave: function(e) {
-    this.getItem(e.target).removeClass(this.get('itemHoverClass'));
-  },
+  // mouseleave: function(e) {
+  //   this.getItem(e.target).removeClass(this.get('itemHoverClass'));
+  // },
 
   focus: function(e) {
     var target = e.target,
-      autoFocusEle = this.get('autoFocusEle'),
-      that = this;
+      autoFocusEle = this.get('autoFocusEle');
 
     if (autoFocusEle && autoFocusEle.has(target)) {
+<<<<<<< HEAD
       $(target).on('input',function() {
         that.set('autoFocusEle', null);
         that.focus({target: target});
       });
 
       return;
+=======
+      return this.set('autoFocusEle', null);
+>>>>>>> 1.x
     }
 
     var item = this.getItem(target);
 
     item.removeClass(this.get('itemErrorClass'))
-        .addClass(this.get('itemFocusClass'));
+      .addClass(this.get('itemFocusClass'));
 
-    this.getExplain(target).html($(target).data('explain') || '');
+    this.getExplain(target).html(target.getAttribute('data-explain') || '');
   },
 
   blur: function(e) {
@@ -128,5 +131,52 @@ var Validator = Core.extend({
   }
 });
 
+Validator.pluginEntry = {
+  name: 'Validator',
+  starter: function() {
+    var plugin = this,
+      host = plugin.host;
+
+    plugin.execute = function() {
+      plugin.exports = new Validator($.extend(true, {
+        element: host.element
+      }, plugin.getOptions('config')));
+
+      // for form
+      typeof host.addField === 'function' &&
+        host.after('addField', function(ret, options) {
+          Validator.addItemFromHTML(plugin.exports, '[name="' + options.name + '"]');
+        });
+
+      // for form
+      typeof host.removeField === 'function' &&
+        host.before('removeField', function(name) {
+          plugin.exports.removeItem(host.$('[name="' + name + '"]'));
+        });
+
+      plugin.trigger('export', plugin.exports);
+    };
+
+    typeof host.use === 'function' &&
+      plugin.on('export', function(instance) {
+        host.use(function(next) {
+          instance.execute(function(err) {
+            if (!err) {
+              next();
+            }
+          });
+        }, 'Validator');
+      });
+
+    host.after('render', plugin.execute);
+
+    host.before('destroy', function() {
+      plugin.exports && plugin.exports.destroy();
+    });
+
+    // 通知就绪
+    this.ready();
+  }
+};
 
 module.exports = Validator;

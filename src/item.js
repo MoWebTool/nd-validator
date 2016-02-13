@@ -1,15 +1,24 @@
+/**
+ * @module Validator
+ * @author crossjs <liwenfu@crossjs.com>
+ */
+
 'use strict';
 
-var $ = require('jquery'),
-  Widget = require('nd-widget'),
-  utils = require('./utils'),
-  async = require('./async'),
-  Rule = require('./rule');
+var $ = require('jquery');
+var Widget = require('nd-widget');
+
+var utils = require('./utils');
+var async = require('./async');
+var Rule = require('./rule');
+
+// var SKIP_SUBMIT = 1; // see: nd-form
+var SKIP_VALIDATE = 2;
 
 var setterConfig = {
-  value: $.noop,
+  value: function() {},
   setter: function (val) {
-    return $.isFunction(val) ? val : utils.helper(val);
+    return (typeof val === 'function') ? val : utils.helper(val);
   }
 };
 
@@ -170,11 +179,13 @@ var Item = Widget.extend({
   // 通过 async.forEachSeries 的第二个参数 Fn(item, cb) 的 cb 参数
   execute: function (callback, context) {
     var self = this,
-      elemDisabled = !!self.element.attr('disabled');
+      elemDisabled = !!self.element.attr('disabled'),
+      elemDataSkip = +(self.element.attr('data-skip') || '') & SKIP_VALIDATE;
 
     context = context || {};
+
     // 如果是设置了不检查不可见元素的话, 直接 callback
-    if (self.get('skipHidden') && utils.isHidden(self.element) || elemDisabled) {
+    if (self.get('skipHidden') && utils.isHidden(self.element) || elemDisabled || elemDataSkip) {
       callback && callback(null, '', self.element);
       return self;
     }
@@ -203,7 +214,7 @@ var Item = Widget.extend({
 
     isSuccess = !!isSuccess;
 
-    $.each(rules, function(i, item) {
+    rules.forEach(function(item) {
       var obj = utils.parseRule(item),
         ruleName = obj.name,
         param = obj.param;
@@ -212,6 +223,7 @@ var Item = Widget.extend({
         message = Rule.getMessage($.extend(options || {}, getMsgOptions(param, ruleName, self)), isSuccess);
       }
     });
+
     return message;
   }
 });

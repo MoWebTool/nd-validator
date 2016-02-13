@@ -1,8 +1,9 @@
 'use strict';
 
-var $ = require('jquery'),
-  rules = {},
-  messages = {};
+var $ = require('jquery');
+var __ = require('nd-i18n');
+var rules = {};
+var messages = {};
 
 function setMessage(name, msg) {
   /*jshint validthis:true*/
@@ -181,79 +182,111 @@ function addRule(name, operator, message) {
   return this;
 }
 
-addRule('required', function(options) {
-  var element = $(options.element);
+var inited;
 
-  var t = element.attr('type');
-  switch (t) {
-    case 'checkbox':
-    case 'radio':
-      var checked = false;
-      element.each(function(i, item) {
-        if ($(item).prop('checked')) {
-          checked = true;
-          return false;
-        }
-      });
-      return checked;
-    default:
-      return Boolean($.trim(element.val()));
+function init() {
+  if (inited) {
+    return;
   }
-}, '请输入{{display}}');
 
-addRule('email', /^\s*([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,20})\s*$/, '{{display}}的格式不正确');
+  inited = true;
+  addRule('required', function(options) {
+    var element = $(options.element);
 
-addRule('text', /.*/);
+    var t = element.attr('type');
+    switch (t) {
+      case 'checkbox':
+      case 'radio':
+        var checked = false;
+        element.each(function(i, item) {
+          if ($(item).prop('checked')) {
+            checked = true;
+            return false;
+          }
+        });
+        return checked;
+      default:
+        return Boolean($.trim(element.val()));
+    }
+  }, __('请输入{{display}}'));
 
-addRule('password', /.*/);
+  addRule('email', /^\s*([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,20})\s*$/, __('{{display}}的格式不正确'));
 
-addRule('radio', /.*/);
+  addRule('text', /.*/);
 
-addRule('checkbox', /.*/);
+  addRule('password', /.*/);
 
-addRule('url', /^(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/, '{{display}}的格式不正确');
+  addRule('radio', /.*/);
 
-addRule('number', /^[+-]?[1-9][0-9]*(\.[0-9]+)?([eE][+-][1-9][0-9]*)?$|^[+-]?0?\.[0-9]+([eE][+-][1-9][0-9]*)?$|^0$/, '{{display}}的格式不正确');
+  addRule('checkbox', /.*/);
 
-// 00123450 是 digits 但不是 number
-// 1.23 是 number 但不是 digits
-addRule('digits', /^\s*\d+\s*$/, '{{display}}的格式不正确');
+  addRule('url', /^(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/, __('{{display}}的格式不正确'));
 
-addRule('date', /^\d{4}\-[01]?\d\-[0-3]?\d$|^[01]\d\/[0-3]\d\/\d{4}$|^\d{4}年[01]?\d月[0-3]?\d[日号]$/, '{{display}}的格式不正确');
+  addRule('number', /^[+-]?[1-9][0-9]*(\.[0-9]+)?([eE][+-][1-9][0-9]*)?$|^[+-]?0?\.[0-9]+([eE][+-][1-9][0-9]*)?$|^0$/, __('{{display}}的格式不正确'));
 
-addRule('min', function(options) {
-  var element = options.element,
-    min = options.min;
-  return Number(element.val()) >= Number(min);
-}, '{{display}}必须大于或者等于{{min}}');
+  // 00123450 是 digits 但不是 number
+  // 1.23 是 number 但不是 digits
+  addRule('digits', /^\s*\d+\s*$/, __('{{display}}的格式不正确'));
 
-addRule('max', function(options) {
-  var element = options.element,
-    max = options.max;
-  return Number(element.val()) <= Number(max);
-}, '{{display}}必须小于或者等于{{max}}');
+  addRule('date', /^\d{4}\-[01]?\d\-[0-3]?\d$|^[01]\d\/[0-3]\d\/\d{4}$|^\d{4}\-[01]?\d\-[0-3]?\d$/, __('{{display}}的格式不正确'));
 
-addRule('minlength', function(options) {
-  var element = options.element;
-  var l = element.val().length;
-  return l >= Number(options.min);
-}, '{{display}}的长度必须大于或等于{{min}}');
+  addRule('pattern', function(options) {
+    return new RegExp(options.pattern).test(options.element.val());
+  }, __('{{display}}不符合规则“{{pattern}}”'));
 
-addRule('maxlength', function(options) {
-  var element = options.element;
-  var l = element.val().length;
-  return l <= Number(options.max);
-}, '{{display}}的长度必须小于或等于{{max}}');
+  addRule('datetime',/^\d{4}\-[01]?\d\-[0-3]?\d\s[0-5]?\d\:[0-5]?\d\:[0-5]?\d$|^[01]?\d\/[0-3]?\d\/\d{4}\s[0-5]?\d\:[0-5]?\d\:[0-5]?\d$|^\d{4}年[01]?\d月[0-3]?\d[日号]\s[0-5]?\d\:[0-5]?\d\:[0-5]?\d$/,'{{display}}的格式不正确');
 
-addRule('mobile', /^1\d{10}$/, '请输入正确的{{display}}');
+  addRule('min', function(options) {
+    var element = options.element,
+      min = options.min;
+    return Number(element.val()) >= Number(min);
+  }, __('{{display}}必须大于或者等于{{min}}'));
 
-addRule('confirmation', function(options) {
-  var element = options.element,
-    target = $(options.target);
-  return element.val() === target.val();
-}, '两次输入的{{display}}不一致，请重新输入');
+  addRule('max', function(options) {
+    var element = options.element,
+      max = options.max;
+    return Number(element.val()) <= Number(max);
+  }, __('{{display}}必须小于或者等于{{max}}'));
+
+  addRule('minlength', function(options) {
+    var element = options.element;
+    var l = element.val().length;
+    return l >= Number(options.min);
+  }, __('{{display}}的长度必须大于或等于{{min}}'));
+
+  addRule('maxlength', function(options) {
+    var element = options.element;
+    var l = element.val().length;
+    return l <= Number(options.max);
+  }, __('{{display}}的长度必须小于或等于{{max}}'));
+
+  addRule('minbytes', function(options) {
+    var element = options.element;
+    var v = element.val();
+    var b = v.match(/[^\x00-\xff]/g);
+    var l = v.length + (b && b.length);
+    return l >= Number(options.min);
+  }, __('{{display}}的字节长度必须大于或等于{{min}}'));
+
+  addRule('maxbytes', function(options) {
+    var element = options.element;
+    var v = element.val();
+    var b = v.match(/[^\x00-\xff]/g);
+    var l = v.length + (b && b.length);
+    return l <= Number(options.max);
+  }, __('{{display}}的字节长度必须小于或等于{{max}}'));
+
+  addRule('mobile', /^1\d{10}$/, __('请输入正确的{{display}}'));
+
+  addRule('confirmation', function(options) {
+    var element = options.element,
+      target = $(options.target);
+    return element.val() === target.val();
+  }, __('两次输入的{{display}}不一致，请重新输入'));
+}
 
 module.exports = {
+  init: init,
   addRule: addRule,
   setMessage: setMessage,
   getMessage: function(options, isSuccess) {
