@@ -38,6 +38,8 @@ function parseDom(field) {
   var type = field.attr('type');
   if (type && type !== 'submit' && type !== 'cancel' && type !== 'checkbox' && type !== 'radio' && type !== 'select' && type !== 'select-one' && type !== 'file' && type !== 'hidden' && type !== 'textarea') {
 
+    Rule.init();
+
     if (!Rule.getRule(type)) {
       throw new Error('Form field with type "' + type + '" not supported!');
     }
@@ -115,6 +117,16 @@ function parseJSON(str) {
     return null;
   }
 
+  // 'abc' -> 'abc'  '"abc"' -> 'abc'
+  function getValue(str) {
+    if (str.charAt(0) === '"' && str.slice(- 1) === '"' || str.charAt(0) === '\'' && str.slice(-1) === '\'') {
+      /*jshint evil:true*/
+      return eval(str);
+    }
+
+    return str;
+  }
+
   var NOTICE = 'Invalid option object "' + str + '".';
 
   // remove braces
@@ -144,16 +156,6 @@ function parseJSON(str) {
     result[getValue(key)] = (key === 'pattern') ?
         patterns[value] : getValue(value).trim();
   });
-
-  // 'abc' -> 'abc'  '"abc"' -> 'abc'
-  function getValue(str) {
-    if (str.charAt(0) === '"' && str.slice(- 1) === '"' || str.charAt(0) === '\'' && str.slice(-1) === '\'') {
-      /*jshint evil:true*/
-      return eval(str);
-    }
-
-    return str;
-  }
 
   return result;
 }

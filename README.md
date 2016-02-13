@@ -1,13 +1,15 @@
 # nd-validator
 
-[![spm version](http://spm.crossjs.com/badge/nd-validator)](http://spm.crossjs.com/package/nd-validator)
+[![Travis](https://img.shields.io/travis/ndfront/nd-validator.svg?style=flat-square)](https://github.com/ndfront/nd-validator)
+[![Coveralls](https://img.shields.io/coveralls/ndfront/nd-validator.svg?style=flat-square)](https://github.com/ndfront/nd-validator)
+[![NPM version](https://img.shields.io/npm/v/nd-validator.svg?style=flat-square)](https://npmjs.org/package/nd-validator)
 
 > 表单校验组件。fork 自 [arale-validator](https://github.com/aralejs/validator)
 
 ## 安装
 
 ```bash
-$ spm install nd-validator --save
+$ npm install nd-validator --save
 ```
 
 ## 使用

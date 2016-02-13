@@ -8,14 +8,11 @@
 var $ = require('jquery');
 
 var Core = require('./src/core');
+var Rule = require('./src/rule');
 
 var Validator = Core.extend({
 
   events: {
-    // 'mouseenter .{{attrs.inputClass}}': 'mouseenter',
-    // 'mouseleave .{{attrs.inputClass}}': 'mouseleave',
-    // 'mouseenter .{{attrs.textareaClass}}': 'mouseenter',
-    // 'mouseleave .{{attrs.textareaClass}}': 'mouseleave',
     'focus .{{attrs.itemClass}} input,textarea,select': 'focus',
     'blur .{{attrs.itemClass}} input,textarea,select': 'blur',
     'mouseup .{{attrs.explainClass}}': function(e) {
@@ -26,7 +23,6 @@ var Validator = Core.extend({
   attrs: {
     explainClass: 'ui-form-explain',
     itemClass: 'ui-form-item',
-    // itemHoverClass: 'ui-form-item-hover',
     itemFocusClass: 'ui-form-item-focus',
     itemErrorClass: 'ui-form-item-error',
     inputClass: 'ui-form-input',
@@ -45,6 +41,8 @@ var Validator = Core.extend({
 
   setup: function() {
     Validator.superclass.setup.call(this);
+
+    Rule.init();
 
     this.on('autoFocus', function(ele) {
       this.set('autoFocusEle', ele);
