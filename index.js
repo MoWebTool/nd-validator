@@ -106,16 +106,7 @@ var Validator = Core.extend({
       autoFocusEle = this.get('autoFocusEle');
 
     if (autoFocusEle && autoFocusEle.has(target)) {
-<<<<<<< HEAD
-      $(target).on('input',function() {
-        that.set('autoFocusEle', null);
-        that.focus({target: target});
-      });
-
-      return;
-=======
       return this.set('autoFocusEle', null);
->>>>>>> 1.x
     }
 
     var item = this.getItem(target);
