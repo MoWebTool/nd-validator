@@ -1,6 +1,6 @@
 'use strict';
 
-var $ = require('jquery');
+var $ = require('nd-jquery');
 var __ = require('nd-i18n');
 var rules = {};
 var messages = {};

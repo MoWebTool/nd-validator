@@ -5,7 +5,7 @@
 
 'use strict';
 
-var $ = require('jquery');
+var $ = require('nd-jquery');
 
 var Core = require('./src/core');
 var Rule = require('./src/rule');

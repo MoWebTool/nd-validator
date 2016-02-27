@@ -1,7 +1,7 @@
 'use strict';
 
 var Validator = require('../index'),
-  $ = require('jquery'),
+  $ = require('nd-jquery'),
   expect = require('expect.js');
 
 /*globals describe,it,beforeEach,afterEach*/

@@ -1,6 +1,6 @@
 {
   "name": "nd-validator",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "表单校验组件。",
   "keywords": [],
   "homepage": "https://github.com/ndfront/nd-validator",
@@ -22,9 +22,9 @@
   "licenses": "MIT",
   "main": "index.js",
   "dependencies": {
-    "jquery": "^1.11.1",
     "nd-i18n": "^3.0.0",
-    "nd-widget": "^3.0.0"
+    "nd-widget": "^3.0.1",
+    "nd-jquery": "^2.2.1"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",

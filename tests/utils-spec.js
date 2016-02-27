@@ -1,7 +1,7 @@
 'use strict';
 
 var Utils = require('../src/utils'),
-  $ = require('jquery'),
+  $ = require('nd-jquery'),
   expect = require('expect.js');
 
 /*globals describe,it,afterEach*/

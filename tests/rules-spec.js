@@ -1,7 +1,7 @@
 'use strict';
 
 var Core = require('../src/core'),
-  $ = require('jquery'),
+  $ = require('nd-jquery'),
   expect = require('expect.js');
 
 /*globals describe,it,beforeEach,afterEach*/

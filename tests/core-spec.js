@@ -2,7 +2,7 @@
 
 var Core = require('../src/core'),
   Item = require('../src/item'),
-  $ = require('jquery'),
+  $ = require('nd-jquery'),
   expect = require('expect.js');
 
 /*globals describe,it,beforeEach,afterEach*/
