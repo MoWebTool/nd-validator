@@ -1,8 +1,14 @@
-'use strict';
+'use strict'
 
-var Core = require('../src/core'),
-  $ = require('nd-jquery'),
-  expect = require('expect.js');
+var $ = require('nd-jquery')
+var chai = require('chai')
+var sinonChai = require('sinon-chai')
+var Core = require('../src/core')
+
+var expect = chai.expect
+// var sinon = window.sinon
+
+chai.use(sinonChai)
 
 /*globals describe,it,beforeEach,afterEach*/
 

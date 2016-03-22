@@ -1,9 +1,15 @@
-'use strict';
+'use strict'
 
-var Core = require('../src/core'),
-  Item = require('../src/item'),
-  $ = require('nd-jquery'),
-  expect = require('expect.js');
+var $ = require('nd-jquery')
+var chai = require('chai')
+var sinonChai = require('sinon-chai')
+var Core = require('../src/core')
+var Item = require('../src/item')
+
+var expect = chai.expect
+// var sinon = window.sinon
+
+chai.use(sinonChai)
 
 /*globals describe,it,beforeEach,afterEach*/
 
@@ -187,7 +193,7 @@ describe('validator-core', function() {
       element: '[name=email]',
       required: true
     });
-    $("[name=email]").attr("disabled", true);
+    $('[name=email]').attr('disabled', true);
 
     validator.on('formValidated', function(err, results) {
       expect(err).to.be(false);
@@ -196,7 +202,7 @@ describe('validator-core', function() {
 
     validator.execute();
 
-    $("[name=email]").removeAttr("disabled");
+    $('[name=email]').removeAttr('disabled');
   });
 
 

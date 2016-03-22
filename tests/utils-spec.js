@@ -1,8 +1,14 @@
-'use strict';
+'use strict'
 
-var Utils = require('../src/utils'),
-  $ = require('nd-jquery'),
-  expect = require('expect.js');
+var $ = require('nd-jquery')
+var chai = require('chai')
+var sinonChai = require('sinon-chai')
+var Utils = require('../src/utils')
+
+var expect = chai.expect
+// var sinon = window.sinon
+
+chai.use(sinonChai)
 
 /*globals describe,it,afterEach*/
 

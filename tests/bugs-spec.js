@@ -1,8 +1,14 @@
-'use strict';
+'use strict'
 
-var Validator = require('../index'),
-  $ = require('nd-jquery'),
-  expect = require('expect.js');
+var $ = require('nd-jquery')
+var chai = require('chai')
+var sinonChai = require('sinon-chai')
+var Validator = require('../index')
+
+var expect = chai.expect
+// var sinon = window.sinon
+
+chai.use(sinonChai)
 
 /*globals describe,it,beforeEach,afterEach*/
 
@@ -25,15 +31,15 @@ describe('bugs', function() {
       element: '#test-form'
     });
     validator.addItem({
-       element: '[name=email]',
-       required: true
+      element: '[name=email]',
+      required: true
     });
     var validator2 = new Validator({
       element: '#test-form2'
     });
     validator2.addItem({
-       element: '[name=email]',
-       required: true
+      element: '[name=email]',
+      required: true
     });
 
     expect(validator.items[0].element.length).to.be(1);
@@ -50,20 +56,20 @@ describe('bugs', function() {
       element: '#test-form'
     });
     validator.addItem({
-       element: '[name=email]',
-       required: true
+      element: '[name=email]',
+      required: true
     });
 
     var validator2 = new Validator({
       element: '#test-form2'
     });
     validator2.addItem({
-       element: '[name=email]',
-       required: true
+      element: '[name=email]',
+      required: true
     });
     validator2.addItem({
-       element: '[name=password]',
-       required: true
+      element: '[name=password]',
+      required: true
     });
 
     expect(validator.query('[name="email"]').element[0]).to.be($('#test-form [name=email]')[0]);

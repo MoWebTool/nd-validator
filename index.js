@@ -9,6 +9,7 @@ var $ = require('nd-jquery');
 
 var Core = require('./src/core');
 var Rule = require('./src/rule');
+var Counter = require('./src/counter');
 
 var Validator = Core.extend({
 
@@ -29,13 +30,18 @@ var Validator = Core.extend({
     textareaClass: 'ui-form-textarea',
 
     showMessage: function(message, element) {
-      this.getExplain(element).html(message);
+      var explain = this.getExplain(element);
+      Counter.increase(explain, element);
+      explain.html(message);
       this.getItem(element).addClass(this.get('itemErrorClass'));
     },
 
     hideMessage: function(message, element) {
-      this.getExplain(element).html(element.data('explain') || ' ');
-      this.getItem(element).removeClass(this.get('itemErrorClass'));
+      var explain = this.getExplain(element);
+      if (!Counter.decrease(explain, element)) {
+        explain.html(element.data('explain') || '');
+        this.getItem(element).removeClass(this.get('itemErrorClass'));
+      }
     }
   },
 
@@ -90,7 +96,9 @@ var Validator = Core.extend({
   },
 
   getItem: function(ele) {
-    return $(ele).parents('.' + this.get('itemClass'));
+    // maybe more than one element
+    var items = $(ele).parents('.' + this.get('itemClass'));
+    return items.eq(items.length - 1);
   },
 
   // mouseenter: function(e) {
@@ -109,9 +117,7 @@ var Validator = Core.extend({
       return this.set('autoFocusEle', null);
     }
 
-    var item = this.getItem(target);
-
-    item.removeClass(this.get('itemErrorClass'))
+    this.getItem(target).removeClass(this.get('itemErrorClass'))
       .addClass(this.get('itemFocusClass'));
 
     this.getExplain(target).html(target.getAttribute('data-explain') || '');

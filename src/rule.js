@@ -1,7 +1,13 @@
+/**
+ * @module Validator
+ * @author crossjs <liwenfu@crossjs.com>
+ */
+
 'use strict';
 
 var $ = require('nd-jquery');
 var __ = require('nd-i18n');
+
 var rules = {};
 var messages = {};
 
@@ -73,7 +79,7 @@ function Rule(name, oper) {
       var rslt = oper.test($(opts.element).val());
       commit(rslt ? null : opts.rule, _getMsg(opts, rslt));
     };
-  } else if ($.isFunction(oper)) {
+  } else if (typeof oper === 'function') {
     self.operator = function(opts, commit) {
       var rslt = oper.call(this, opts, function(result, msg) {
         commit(result ? null : opts.rule, msg || _getMsg(opts, result));

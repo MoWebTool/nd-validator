@@ -1,3 +1,8 @@
+/**
+ * @module Validator
+ * @author crossjs <liwenfu@crossjs.com>
+ */
+
 'use strict';
 
 var $ = require('nd-jquery');

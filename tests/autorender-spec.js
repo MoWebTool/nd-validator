@@ -1,9 +1,15 @@
-'use strict';
+'use strict'
 
-var Validator = require('../index'),
-  $ = require('nd-jquery'),
-  expect = require('expect.js'),
-  Widget = require('nd-widget');
+var $ = require('nd-jquery')
+var chai = require('chai')
+var sinonChai = require('sinon-chai')
+var Widget = require('nd-widget')
+var Validator = require('../index')
+
+var expect = chai.expect
+// var sinon = window.sinon
+
+chai.use(sinonChai)
 
 /*globals describe,it*/
 

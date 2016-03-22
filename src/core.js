@@ -124,11 +124,15 @@ var Core = Widget.extend({
       // see: http://bugs.jquery.com/ticket/12577
       try {
         self.element.attr('novalidate', 'novalidate');
-      } catch (e) {}
+      } catch (e) {
+        // nothing
+      }
 
       //If checkOnSubmit is true, then bind submit event to execute validation.
       if (self.get('checkOnSubmit')) {
-        self.element.on('submit.validator', function(e) {
+        self.element
+        .off('submit.validator')
+        .on('submit.validator', function(e) {
           e.preventDefault();
           self.execute(function(err) {
             !err && self.get('autoSubmit') && self.element.get(0).submit();
@@ -137,7 +141,7 @@ var Core = Widget.extend({
       }
     }
 
-    /*jshint maxparams:4*/
+    /*eslint max-params: [2, 4]*/
 
     // 当每项校验之后, 根据返回的 err 状态, 显示或隐藏提示信息
     self.on('itemValidated', function(err, message, element, event) {
@@ -272,7 +276,6 @@ var Core = Widget.extend({
         // Async doesn't allow any of tasks to fail, if you want the final callback executed after all tasks finished.
         // So pass none-error value to task callback instead of the real result.
         cb(self.get('stopOnError') ? err : null);
-
       });
     }, function() { // complete callback
       if (self.get('autoFocus') && hasError) {
@@ -298,7 +301,9 @@ var Core = Widget.extend({
         } else {
           self.element.attr('novalidate', self.__novalidate);
         }
-      } catch (e) {}
+      } catch (e) {
+        // nothing
+      }
 
       self.element.off('submit.validator');
     }

@@ -105,7 +105,7 @@ var doSeries = function(fn) {
   };
 };
 
-/*jshint maxparams:4*/
+/*eslint max-params: [2, 4]*/
 
 var _asyncMap = function(eachfn, arr, iterator, callback) {
   var results = [];
@@ -127,8 +127,7 @@ async.map = doParallel(_asyncMap);
 async.mapSeries = doSeries(_asyncMap);
 
 async.series = function(tasks, callback) {
-  callback = callback || function() {
-  };
+  callback = callback || function() {};
   if (tasks.constructor === Array) {
     async.mapSeries(tasks, function(fn, callback) {
       if (fn) {

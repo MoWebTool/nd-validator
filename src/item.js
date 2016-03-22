@@ -73,13 +73,13 @@ function _metaValidate(self, rules, callback) {
     }
   }
 
-  if (!$.isArray(rules)) {
+  if (!Array.isArray(rules)) {
     throw new Error('No validation rule specified or not specified as an array.');
   }
 
   var tasks = [];
 
-  $.each(rules, function (i, item) {
+  rules.forEach(function(item) {
     var obj = utils.parseRule(item),
       ruleName = obj.name,
       param = obj.param;
@@ -158,7 +158,7 @@ var Item = Widget.extend({
     required: {
       value: false,
       getter: function(val) {
-        return $.isFunction(val) ? val() : val;
+        return typeof val === 'function' ? val() : val;
       }
     },
     checkNull: true,
@@ -170,7 +170,7 @@ var Item = Widget.extend({
   },
 
   setup: function () {
-    if (!this.get('display') && $.isFunction(this.get('displayHelper'))) {
+    if (!this.get('display') && typeof this.get('displayHelper') === 'function') {
       this.set('display', this.get('displayHelper')(this));
     }
   },
@@ -190,17 +190,19 @@ var Item = Widget.extend({
       return self;
     }
 
-    self.trigger('itemValidate', self.element, context.event);
+    self.get('hideMessage').call(self._validator, null, self.element, context);
+
+    self.trigger('itemValidate', self.element, context);
 
     var rules = utils.parseRules(self.get('rule'));
 
     if (rules) {
       _metaValidate(self, rules, function (err, msg) {
-        self.trigger('itemValidated', err, msg, self.element, context.event);
+        self.trigger('itemValidated', err, msg, self.element, context);
         callback && callback(err, msg, self.element);
       });
     } else {
-      self.trigger('itemValidated', null, '', self.element, context.event);
+      self.trigger('itemValidated', null, '', self.element, context);
       callback && callback(null, '', self.element);
     }
 
