@@ -1,159 +1,159 @@
-'use strict';
+'use strict'
 
-var async = exports;
+var async = exports
 
 //// cross-browser compatiblity functions ////
 
 var _forEach = function(arr, iterator) {
   if (arr.forEach) {
-    return arr.forEach(iterator);
+    return arr.forEach(iterator)
   }
 
   for (var i = 0; i < arr.length; i += 1) {
-    iterator(arr[i], i, arr);
+    iterator(arr[i], i, arr)
   }
-};
+}
 
 var _map = function(arr, iterator) {
   if (arr.map) {
-    return arr.map(iterator);
+    return arr.map(iterator)
   }
-  var results = [];
+  var results = []
   _forEach(arr, function(x, i, a) {
-    results.push(iterator(x, i, a));
-  });
-  return results;
-};
+    results.push(iterator(x, i, a))
+  })
+  return results
+}
 
 var _keys = function(obj) {
   if (Object.keys) {
-    return Object.keys(obj);
+    return Object.keys(obj)
   }
-  var keys = [];
+  var keys = []
   for (var k in obj) {
     if (obj.hasOwnProperty(k)) {
-      keys.push(k);
+      keys.push(k)
     }
   }
-  return keys;
-};
+  return keys
+}
 
 //// exported async module functions ////
 
 async.forEach = function(arr, iterator, callback) {
   callback = callback || function() {
-  };
-  if (!arr.length) {
-    return callback();
   }
-  var completed = 0;
+  if (!arr.length) {
+    return callback()
+  }
+  var completed = 0
   _forEach(arr, function(x) {
     iterator(x, function(err) {
       if (err) {
-        callback(err);
+        callback(err)
         callback = function() {
-        };
-      }
-      else {
-        completed += 1;
-        if (completed === arr.length) {
-          callback(null);
         }
       }
-    });
-  });
-};
+      else {
+        completed += 1
+        if (completed === arr.length) {
+          callback(null)
+        }
+      }
+    })
+  })
+}
 
 async.forEachSeries = function(arr, iterator, callback) {
   callback = callback || function() {
-  };
-  if (!arr.length) {
-    return callback();
   }
-  var completed = 0;
+  if (!arr.length) {
+    return callback()
+  }
+  var completed = 0
   var iterate = function() {
     iterator(arr[completed], function(err) {
       if (err) {
-        callback(err);
+        callback(err)
         callback = function() {
-        };
+        }
       }
       else {
-        completed += 1;
+        completed += 1
         if (completed === arr.length) {
-          callback(null);
+          callback(null)
         }
         else {
-          iterate();
+          iterate()
         }
       }
-    });
-  };
-  iterate();
-};
+    })
+  }
+  iterate()
+}
 
 var doParallel = function(fn) {
   return function() {
-    var args = Array.prototype.slice.call(arguments);
-    return fn.apply(null, [async.forEach].concat(args));
-  };
-};
+    var args = Array.prototype.slice.call(arguments)
+    return fn.apply(null, [async.forEach].concat(args))
+  }
+}
 var doSeries = function(fn) {
   return function() {
-    var args = Array.prototype.slice.call(arguments);
-    return fn.apply(null, [async.forEachSeries].concat(args));
-  };
-};
+    var args = Array.prototype.slice.call(arguments)
+    return fn.apply(null, [async.forEachSeries].concat(args))
+  }
+}
 
 /*eslint max-params: [2, 4]*/
 
 var _asyncMap = function(eachfn, arr, iterator, callback) {
-  var results = [];
+  var results = []
   arr = _map(arr, function(x, i) {
-    return {index: i, value: x};
-  });
+    return {index: i, value: x}
+  })
   eachfn(arr, function(x, callback) {
     iterator(x.value, function(err, v) {
-      results[x.index] = v;
-      callback(err);
-    });
+      results[x.index] = v
+      callback(err)
+    })
   }, function(err) {
-    callback(err, results);
-  });
-};
+    callback(err, results)
+  })
+}
 
-async.map = doParallel(_asyncMap);
+async.map = doParallel(_asyncMap)
 
-async.mapSeries = doSeries(_asyncMap);
+async.mapSeries = doSeries(_asyncMap)
 
 async.series = function(tasks, callback) {
-  callback = callback || function() {};
+  callback = callback || function() {}
   if (tasks.constructor === Array) {
     async.mapSeries(tasks, function(fn, callback) {
       if (fn) {
         fn(function(err) {
-          var args = Array.prototype.slice.call(arguments, 1);
+          var args = Array.prototype.slice.call(arguments, 1)
           if (args.length <= 1) {
-            args = args[0];
+            args = args[0]
           }
-          callback.call(null, err, args);
-        });
+          callback.call(null, err, args)
+        })
       }
-    }, callback);
+    }, callback)
   }
   else {
-    var results = {};
+    var results = {}
     async.forEachSeries(_keys(tasks), function(k, callback) {
       tasks[k](function(err) {
-        var args = Array.prototype.slice.call(arguments, 1);
+        var args = Array.prototype.slice.call(arguments, 1)
         if (args.length <= 1) {
-          args = args[0];
+          args = args[0]
         }
-        results[k] = args;
-        callback(err);
-      });
+        results[k] = args
+        callback(err)
+      })
     }, function(err) {
-      callback(err, results);
-    });
+      callback(err, results)
+    })
   }
-};
+}
