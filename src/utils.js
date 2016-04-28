@@ -59,6 +59,12 @@ function parseDom(field) {
     arr.push('pattern{pattern:' + index + '}')
   }
 
+  //parse accept attribute
+  var accept = field.attr('accept')
+  if (accept) {
+    arr.push('accept{"accept":"' + accept + '"}')
+  }  
+  
   //parse min attribute
   var min = field.attr('min')
   if (min) {
@@ -139,6 +145,12 @@ function parseJSON(str) {
 
   var result = {}
 
+  var acc = str.split(':')
+  if (acc && acc.length > 1 && acc[0] === '"accept"') {
+    result['accept'] = getValue(acc[1]).trim()
+    return result
+  }
+  
   var arr = str.split(',')
 
   arr.forEach(function(v, i) {

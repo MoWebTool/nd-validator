@@ -238,6 +238,11 @@ function init() {
     return new RegExp(options.pattern).test(options.element.val())
   }, __('{{display}}不符合规则“{{pattern}}”'))
 
+  addRule('accept', function(options) {
+    var accept = options.accept.replace(/,/g, '|') + '$'
+    return new RegExp(accept).test(options.element.val())
+  }, __('请选择{{accept}}文件'))
+  
   addRule('datetime',/^\d{4}\-[01]?\d\-[0-3]?\d\s[0-5]?\d\:[0-5]?\d\:[0-5]?\d$|^[01]?\d\/[0-3]?\d\/\d{4}\s[0-5]?\d\:[0-5]?\d\:[0-5]?\d$|^\d{4}年[01]?\d月[0-3]?\d[日号]\s[0-5]?\d\:[0-5]?\d\:[0-5]?\d$/,'{{display}}的格式不正确')
 
   addRule('min', function(options) {
