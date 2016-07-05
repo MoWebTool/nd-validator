@@ -185,10 +185,12 @@ Validator.pluginEntry = {
 
     typeof host.use === 'function' &&
       plugin.on('export', function(instance) {
-        host.use(function(next) {
+        host.use(function(next, fail) {
           instance.execute(function(err) {
             if (!err) {
               next()
+            } else {
+              fail && fail()
             }
           })
         }, 'Validator')
